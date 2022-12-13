@@ -1,0 +1,39 @@
+# Agnostic Development Environment
+# USE: 
+#   to turn on editing .env file: docker-compose up --build -d
+#   To turn on without editing .env file: PROJ_NAME=$(basename ${PWD}) DOCKER_USER=${USER} \ 
+#                                           docker-compose up --build -d docker-compose up --build -d
+#   to turn off: docker-compose down
+
+version: "3.8"
+services:
+  dev_env:
+    environment:
+      - PROJ_NAME
+    container_name: ${PROJ_NAME}_cont
+    hostname: ${PROJ_NAME}_cont
+    env_file:
+      - .env
+    build:
+      context: .
+      args:
+        - VARIANT=${VARIANT}
+        - WORKDIR=${WORKDIR}
+        - OS_IMG=${OS_IMG}
+        - DOCKER_USER=${DOCKER_USER}
+        - USER_ID=${USER_ID}
+        - GROUP_ID=${GROUP_ID}
+        - BIN_DIR=${BIN_DIR}
+        - HADOLINT_VERSION=${HADOLINT_VERSION}
+        - SHELLCHECK_VERSION=${SHELLCHECK_VERSION}
+        - TF_VERSION=${TF_VERSION}
+        - TFGRUNT_VERSION=${TFGRUNT_VERSION}
+        - TFDOCS_VERSION=${TFDOCS_VERSION}
+        - TFSEC_VERSION=${TFSEC_VERSION}
+        - TSCAN_VERSION=${TSCAN_VERSION}
+        - GO_VERSION=${GO_VERSION}
+    volumes:
+      - ${PWD}:/workspaces:rw
+      - ${HOME}/.aws:/home/${DOCKER_USER}/.aws:ro
+      - ${HOME}/.ssh:/home/${DOCKER_USER}/.ssh:ro
+      - /var/run/docker.sock:/var/run/docker.sock
